@@ -7,6 +7,7 @@ import com.lunchinator.demo.model.BallotOptionsList;
 import jdk.nashorn.internal.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Array;
@@ -40,22 +41,38 @@ public class FakeBallotOptionDataAccessService implements BallotOptionDao {
 
     @Override
     public List<BallotOption> getAllBallotOptions() {
+        List<BallotOption> options = new ArrayList<>();
         if(ballotOptionsTable.isEmpty()){
-            String ballotOptionsString = restTemplate.getForObject("https://interview-project-17987.herokuapp.com/api/reviews", String.class);
-//            List<BallotOption> ballotOptionsList;
-//            ballotOptionsList = JSON(ballotOptionsString);
-//            List<BallotOption> options = new ArrayList<>();
-////            for(BallotOption item : ballotOptionsList.getBallotOptions()){
-////                options.add(item);
-////            }
+            //todo: get the list of restaurants from the api
+            BallotOption[] ballotOptions = restTemplate.getForObject("https://interview-project-17987.herokuapp.com/api/restaurants", BallotOption[].class);
 
-//            saveBallotOptions(options);
+            for(int i=0; i<ballotOptions.length; i++){
+                options.add(ballotOptions[i]);
+            }
+            for(BallotOption option : options){
+                getReviewDataForRestaurant(option);
+            }
+            saveBallotOptions(options);
         }
+
+
         return (List<BallotOption>) ballotOptionsTable.values();
     }
 
     @Override
     public BallotOption getBallotOptionById(int ballotId) {
         return ballotOptionsTable.get(ballotId);
+    }
+
+    public BallotOption getReviewDataForRestaurant(BallotOption option){
+        String restaurantName = option.getName();
+        try {
+            String[] response = restTemplate.getForObject(String.format("https://interview-project-17987.herokuapp.com/api/reviews/%s", restaurantName), String[].class);
+        }
+        catch(HttpServerErrorException err){
+            return null;
+        }
+        int i = 0;
+        return null;
     }
 }

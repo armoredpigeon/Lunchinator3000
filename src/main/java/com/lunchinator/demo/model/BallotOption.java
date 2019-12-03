@@ -7,15 +7,10 @@ import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BallotOption implements Comparable<BallotOption>{
-    @JsonProperty("Id")
     private final int id;
-    @JsonProperty("restaurant")
     private final String name;
-    @JsonProperty("rating")
     private int averageReview;
-    @JsonProperty("review")
     private String Review;
-    @JsonProperty("reviewer")
     private String TopReviewer;
     private LocalDateTime dateTime;
     private int votes;
