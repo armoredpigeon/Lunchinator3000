@@ -72,7 +72,6 @@ public class FakeBallotOptionDataAccessService implements BallotOptionDao {
         catch(HttpServerErrorException err){
             return null;
         }
-        int i = 0;
         return null;
     }
 }
